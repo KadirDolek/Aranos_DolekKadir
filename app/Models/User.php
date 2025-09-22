@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,14 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -29,29 +22,16 @@ class User extends Authenticatable
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-     public function role(): BelongsTo
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
@@ -84,5 +64,46 @@ class User extends Authenticatable
     public function likedProducts(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'likes');
+    }
+
+    // Méthodes pratiques pour vérifier les rôles
+    public function isAdmin(): bool
+    {
+        return $this->role_id === 1;
+    }
+
+    public function isWebmaster(): bool
+    {
+        return $this->role_id === 2;
+    }
+
+    public function isRedacteur(): bool
+    {
+        return $this->role_id === 3;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role_id === 4;
+    }
+
+    public function hasRole($roleName): bool
+    {
+        return $this->role->name === $roleName;
+    }
+
+    public function canManageContent(): bool
+    {
+        return in_array($this->role_id, [1, 2, 3]); // Admin, Webmaster, Redacteur
+    }
+
+    public function canManageUsers(): bool
+    {
+        return in_array($this->role_id, [1, 2]); // Admin, Webmaster
+    }
+
+    public function canManageSystem(): bool
+    {
+        return $this->role_id === 1; // Admin seulement
     }
 }
