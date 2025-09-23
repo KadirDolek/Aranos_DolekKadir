@@ -10,11 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class, // DOIT Ãªtre ici
+            \App\Http\Middleware\HandleInertiaRequests::class,
+            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-        
+
+        // UN SEUL middleware pour tous les rôles et permissions
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
