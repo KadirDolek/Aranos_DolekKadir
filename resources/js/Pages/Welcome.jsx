@@ -21,19 +21,49 @@ export default function Welcome({ auth, featuredBlog, blogCategories, recentPost
 
                         {/* Menu principal */}
                         <div className="hidden md:flex items-center space-x-8">
-                            <Link href="/" className="text-gray-600 hover:text-gray-900 font-medium">
-                                Home
-                            </Link>
-                            <Link href="/shop" className="text-gray-600 hover:text-gray-900 font-medium">
-                                Shop
-                            </Link>
-                            <Link href="/blog" className="text-gray-600 hover:text-gray-900 font-medium">
-                                Blog
-                            </Link>
-                            <Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium">
-                                Contact
-                            </Link>
-                        </div>
+    {/* Home - Simple lien */}
+    <Link href="/" className="text-gray-600 hover:text-gray-900 font-medium">
+        Home
+    </Link>
+
+    {/* Shop - Dropdown */}
+    <div className="relative group">
+        <button className="text-gray-600 hover:text-gray-900 font-medium flex items-center">
+            Shop
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+        <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-200">
+            <Link href="/shop/products" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Tous les produits
+            </Link>
+            <Link href="/shop/new-arrivals" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nouveautés
+            </Link>
+        </div>
+    </div>
+
+    {/* Blog - Dropdown */}
+    <div className="relative group">
+        <button className="text-gray-600 hover:text-gray-900 font-medium flex items-center">
+            Blog
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+        <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-200">
+            <Link href="/blog" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nos blogs
+            </Link>
+        </div>
+    </div>
+
+    {/* Contact - Simple lien */}
+    <Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium">
+        Contact
+    </Link>
+</div>
 
                         {/* User Dropdown */}
                         <div className="flex items-center space-x-4">
@@ -103,89 +133,45 @@ export default function Welcome({ auth, featuredBlog, blogCategories, recentPost
                 </div>
             </div>
 
-            {/* === Featured Blog + Sidebar (respect strict content & structure) === */}
-            <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Featured Blog (left, spans 2 columns on lg) */}
-                <div className="lg:col-span-2">
-                    {featuredBlog && (
-                        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                            <div className="relative">
-                                {/* date badge: preserved exact content from your original */}
-                                <div className="absolute top-4 left-4 bg-white p-3 text-center rounded shadow">
-                                    <div className="text-2xl font-bold text-gray-800">
-                                        {new Date(featuredBlog.created_at).getDate()}
-                                    </div>
-                                    <div className="text-sm font-medium text-gray-600">
-                                        {new Date(featuredBlog.created_at).toLocaleString('fr-FR', { month: 'short' })}
-                                    </div>
-                                </div>
-
-                                {/* image: preserved */}
-                                <img
-                                    src={`/storage/blog/${featuredBlog.image}`}
-                                    alt={featuredBlog.title}
-                                    className="w-full h-64 object-cover"
+           <div className="mt-12">
+            <div  className="flex px-40 justify-around">
+                    <div className="bg-blue-50 w-[700px] h-96">
+                            <p className="p-8 font-serif">Premium Quality</p>
+                            <h3 className="px-8 font-bold text-3xl">Fauteuils</h3>
+                            <img
+                                src={`/storage/product/offer_img.png`}
+                                className="object-cover -mt-6 ml-auto me-16"
                                 />
-                            </div>
 
-                            <div className="p-6">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-3">{featuredBlog.title}</h2>
-                                <p className="text-gray-600 mb-4">{featuredBlog.description}</p>
-
-                                {/* preserved your "Lire l'article →" link exactly */}
-                                <Link href={route('blog.show', featuredBlog.id)} className="text-blue-600 hover:text-blue-800 font-medium">
-                                    Lire l'article →
-                                </Link>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Sidebar (right) */}
-                <div className="lg:col-span-1 space-y-8">
-                    {/* Search Section (kept exact content) */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h3 className="text-lg font-bold text-gray-900 mb-3">Search Keyword</h3>
-                        <div className="flex">
-                            <input
-                                type="text"
-                                placeholder="Search Keyword"
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none"
-                            />
-                            <button className="bg-blue-600 text-white px-6 py-2 rounded-r-lg font-medium">
-                                SEARCH
-                            </button>
-                        </div>
                     </div>
-
-                    {/* Categories Section (kept exact content/text) */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Category</h3>
-                        <ul className="space-y-3">
-                            <li className="flex justify-between">
-                                <span className="text-gray-700">Travel</span>
-                                <span className="text-gray-500">(0)</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span className="text-gray-700">Health Care</span>
-                                <span className="text-gray-500">(1)</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span className="text-gray-700">Discover</span>
-                                <span className="text-gray-500">(1)</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span className="text-gray-700">Fashion</span>
-                                <span className="text-gray-500">(1)</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span className="text-gray-700">Business</span>
-                                <span className="text-gray-500">(2)</span>
-                            </li>
-                        </ul>
+                    <div  className="bg-blue-50 w-[500px] h-96">
+                            <p className="p-8 font-serif">Premium Quality</p>
+                            <h3 className="px-8 font-bold text-3xl">Canapés</h3>
+                            <img
+                                src={`/storage/product/feature_4.png`}
+                                className="object-cover ml-auto me-16"
+                                />
                     </div>
-                </div>
             </div>
+            <div className="flex px-40 justify-around mt-12">  
+                    <div className="bg-blue-50 w-[500px] h-96">
+                            <p className="p-8 font-serif">Premium Quality</p>
+                            <h3 className="px-8 font-bold text-3xl">Fauteuils</h3>
+                            <img
+                                src={`/storage/product/feature_3.png`}
+                                className="object-cover -mt-5 ml-auto me-12"
+                                />
+                    </div>
+                    <div  className="bg-blue-50 w-[700px] h-96">
+                            <p className="p-8 font-serif">Premium Quality</p>
+                            <h3 className="px-8 font-bold text-3xl">Chaises</h3>
+                            <img
+                                src={`/storage/product/feature_2.png`}
+                                className="object-cover -mt-6 ml-auto me-16"
+                                />
+                    </div>
+            </div>
+           </div>
 
             {/* Footer */}
             <footer className="bg-gray-800 text-white py-12">
