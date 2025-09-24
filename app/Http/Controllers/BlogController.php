@@ -11,31 +11,24 @@ class BlogController extends Controller
 {
     public function index()
     {
-        // Récupérer l'article vedette (featured)
         $featuredBlog = Blog::with(['user', 'category', 'tags'])
-            ->where('is_pinned', true) // Si vous avez un champ pour épingler les articles
-            ->orWhere('id', 1) // Ou un ID spécifique pour l'article featured
+            ->where('is_pinned', true)
+            ->orWhere('id', 1)
             ->first();
 
-        // Si aucun article vedette, prendre le plus récent
         if (!$featuredBlog) {
             $featuredBlog = Blog::with(['user', 'category', 'tags'])->latest()->first();
         }
 
-        // Récupérer les catégories avec le nombre d'articles
         $blogCategories = BlogCategory::withCount('blogs')->get();
-
-        // Récupérer les articles récents (pour la section Recent Posts)
         $recentPosts = Blog::with(['user', 'category'])
             ->where('id', '!=', $featuredBlog->id ?? null)
             ->latest()
             ->take(5)
             ->get();
-
-        // Récupérer tous les tags
         $tags = Tag::withCount('blogs')->get();
 
-        return view('blog.index', compact(
+        return inertia('Blog/Index', compact(
             'featuredBlog',
             'blogCategories',
             'recentPosts',
@@ -45,20 +38,15 @@ class BlogController extends Controller
 
     public function show(Blog $blog)
     {
-        // Charger les relations nécessaires
         $blog->load(['user', 'category', 'tags', 'comments.user']);
-
-        // Récupérer les catégories pour la sidebar
         $blogCategories = BlogCategory::withCount('blogs')->get();
-
-        // Récupérer les articles récents
         $recentPosts = Blog::with(['user', 'category'])
             ->where('id', '!=', $blog->id)
             ->latest()
             ->take(5)
             ->get();
 
-        return view('blog.show', compact('blog', 'blogCategories', 'recentPosts'));
+        return inertia('Blog/Show', compact('blog', 'blogCategories', 'recentPosts'));
     }
 
     public function byCategory(BlogCategory $category)
@@ -71,7 +59,7 @@ class BlogController extends Controller
         $blogCategories = BlogCategory::withCount('blogs')->get();
         $recentPosts = Blog::with(['user', 'category'])->latest()->take(5)->get();
 
-        return view('blog.category', compact('category', 'blogs', 'blogCategories', 'recentPosts'));
+        return inertia('Blog/Category', compact('category', 'blogs', 'blogCategories', 'recentPosts'));
     }
 
     public function search(Request $request)
@@ -87,6 +75,6 @@ class BlogController extends Controller
         $blogCategories = BlogCategory::withCount('blogs')->get();
         $recentPosts = Blog::with(['user', 'category'])->latest()->take(5)->get();
 
-        return view('blog.search', compact('blogs', 'query', 'blogCategories', 'recentPosts'));
+        return inertia('Blog/Search', compact('blogs', 'query', 'blogCategories', 'recentPosts'));
     }
 }

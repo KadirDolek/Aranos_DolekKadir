@@ -12,7 +12,7 @@ class BlogSeeder extends Seeder
         $blog1 = Blog::create([
             'title' => 'Les meilleures destinations de voyage 2024',
             'description' => 'Découvrez les destinations les plus prisées pour vos voyages en 2024.',
-            'image' => 'travel_destinations.jpg',
+            'image' => 'm-blog-1.jpg',
             'user_id' => 3, // Rédacteur
             'category_id' => 1 // Travel
         ]);

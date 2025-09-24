@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained('blog_categories')->onDelete('cascade');
+            $table->boolean('is_pinned')->default(false);
             $table->timestamps();
         });
     }

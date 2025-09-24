@@ -3,16 +3,40 @@
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Models\Blog;
+use App\Models\BlogCategory;
+use App\Models\Tag;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
+    $featuredBlog = Blog::with(['user', 'category', 'tags'])
+        ->where('is_pinned', true)
+        ->orWhere('id', 1)
+        ->first();
+
+    if (!$featuredBlog) {
+        $featuredBlog = Blog::with(['user', 'category', 'tags'])->latest()->first();
+    }
+
+    $blogCategories = BlogCategory::withCount('blogs')->get();
+    $recentPosts = Blog::with(['user', 'category'])
+        ->where('id', '!=', $featuredBlog->id ?? null)
+        ->latest()
+        ->take(5)
+        ->get();
+    $tags = Tag::withCount('blogs')->get();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'featuredBlog' => $featuredBlog,
+        'blogCategories' => $blogCategories,
+        'recentPosts' => $recentPosts,
+        'tags' => $tags
     ]);
 });
 
