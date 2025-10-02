@@ -3,78 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
-use App\Models\BlogCategory;
-use App\Models\Tag;
+use App\Models\BlogCat;
+use App\Models\BlogImg;
+use App\Models\BlogTag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        $featuredBlog = Blog::with(['user', 'category', 'tags'])
-            ->where('is_pinned', true)
-            ->orWhere('id', 1)
-            ->first();
+        $blogs = Blog::with(['blogTag', 'blogCat', 'blogImgs', 'user'])->get();
+        return Inertia::render('Public/Blogs/Index',['blogs' => $blogs]);
+    }
 
-        if (!$featuredBlog) {
-            $featuredBlog = Blog::with(['user', 'category', 'tags'])->latest()->first();
+    public function show($id)
+    {
+        $blog = Blog::with(['blogTag', 'blogCat', 'blogImgs', 'user', 'comments.user'])->findOrFail($id);
+        return Inertia::render('Public/Blogs/Show', [
+            'blog' => $blog,
+            'auth' => [
+                'user' => auth()->user()
+            ]
+        ]);    
+    }
+    public function create()
+    {
+        $categories = BlogCat::all();
+        $tags = BlogTag::all();
+        return Inertia::render('Admin/Blogs/Article/Create', compact('categories', 'tags'));
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'titre' => 'required|string|max:255',
+            'article' => 'required|string|min:10',
+            'blog_cat_id' => 'required|exists:blog_cats,id',
+            'tags' => 'required|array',
+            'tags.*' => 'exists:blog_tags,id',
+            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $blog = Blog::create([
+            'titre' => $validatedData['titre'],
+            'article' => $validatedData['article'],
+            'blog_cat_id' => $validatedData['blog_cat_id'],
+            'user_id' => auth()->id()
+        ]);
+
+        $blog->blogTag()->attach($validatedData['tags']);
+
+        $imagePaths = [];
+        if ($request->hasFile('img')) {
+            $imagePaths['img'] = $request->file('img')->store('blogs/images/' . $blog->id, 'public');
+        }
+        if ($request->hasFile('img2')) {
+            $imagePaths['img2'] = $request->file('img2')->store('blogs/images/' . $blog->id, 'public');
         }
 
-        $blogCategories = BlogCategory::withCount('blogs')->get();
-        $recentPosts = Blog::with(['user', 'category'])
-            ->where('id', '!=', $featuredBlog->id ?? null)
-            ->latest()
-            ->take(5)
-            ->get();
-        $tags = Tag::withCount('blogs')->get();
+        BlogImg::create(array_merge($imagePaths, ['blog_id' => $blog->id]));
 
-        return inertia('Blog/Index', compact(
-            'featuredBlog',
-            'blogCategories',
-            'recentPosts',
-            'tags'
-        ));
-    }
-
-    public function show(Blog $blog)
-    {
-        $blog->load(['user', 'category', 'tags', 'comments.user']);
-        $blogCategories = BlogCategory::withCount('blogs')->get();
-        $recentPosts = Blog::with(['user', 'category'])
-            ->where('id', '!=', $blog->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return inertia('Blog/Show', compact('blog', 'blogCategories', 'recentPosts'));
-    }
-
-    public function byCategory(BlogCategory $category)
-    {
-        $blogs = Blog::with(['user', 'category', 'tags'])
-            ->where('category_id', $category->id)
-            ->latest()
-            ->paginate(10);
-
-        $blogCategories = BlogCategory::withCount('blogs')->get();
-        $recentPosts = Blog::with(['user', 'category'])->latest()->take(5)->get();
-
-        return inertia('Blog/Category', compact('category', 'blogs', 'blogCategories', 'recentPosts'));
-    }
-
-    public function search(Request $request)
-    {
-        $query = $request->get('keyword');
-
-        $blogs = Blog::with(['user', 'category', 'tags'])
-            ->where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->latest()
-            ->paginate(10);
-
-        $blogCategories = BlogCategory::withCount('blogs')->get();
-        $recentPosts = Blog::with(['user', 'category'])->latest()->take(5)->get();
-
-        return inertia('Blog/Search', compact('blogs', 'query', 'blogCategories', 'recentPosts'));
+        return redirect()->route('public.blogs.index')
+            ->with('success', 'Blog ajouté avec succès !');
     }
 }
