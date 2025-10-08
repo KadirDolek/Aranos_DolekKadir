@@ -80,16 +80,7 @@ export default function NavAdmin() {
         </div>
 
         {/* Products Dropdown */}
-        <div className="relative group">
-          <span className="text-sm text-black no-underline cursor-pointer flex items-center gap-1 hover:text-gray-700">
-            Products ▾
-          </span>
-          <div className="absolute top-full left-0 bg-[#FD3266] rounded-lg py-2 min-w-40 z-50 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-            <Link href="/admin/produits" className="block py-2 px-4 text-white text-sm no-underline whitespace-nowrap rounded hover:bg-white hover:text-[#FD3266] transition-all duration-300">
-              Products
-            </Link>
-          </div>
-        </div>
+          
 
         {/* Mailbox Dropdown */}
         <div className="relative group">
@@ -97,7 +88,7 @@ export default function NavAdmin() {
             Mailbox ▾
           </span>
           <div className="absolute top-full left-0 bg-[#FD3266] rounded-lg py-2 min-w-40 z-50 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-            <Link href="/messages" className="block py-2 px-4 text-white text-sm no-underline whitespace-nowrap rounded hover:bg-white hover:text-[#FD3266] transition-all duration-300">
+            <Link href="/admin/messages" className="block py-2 px-4 text-white text-sm no-underline whitespace-nowrap rounded hover:bg-white hover:text-[#FD3266] transition-all duration-300">
               Messages
             </Link>
           </div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\ContactFormController;
 use App\Http\Controllers\DetailsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PanierController;
 use App\Http\Controllers\ProduitadminController;
@@ -25,10 +26,11 @@ Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
 
 Route::get('/contact', [ContactFormController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
+
 Route::get('/details/{id}', [DetailsController::class, 'show'])->name('details.show');
 Route::get('/produits', [ProduitController::class, 'index'])->name('produits');
 
-// === USER AUTH ===
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [PanierController::class, 'index'])->name('cart');
     Route::post('/cart', [PanierController::class, 'store'])->name('cart.store');
@@ -40,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [CommandeController::class, 'index'])->name('orders');
 });
 
-// === ADMIN GLOBAL (tous sauf user_id 1 et 2) ===
+// === ADMIN ROUTES ===
 Route::middleware(['auth', 'exclude.roles'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
 
@@ -99,6 +101,13 @@ Route::middleware(['auth', 'exclude.roles'])->group(function () {
     Route::middleware('role:Agent,Admin')->group(function () {
         Route::get('/admin/orders', [OrderController::class, 'index'])->name('orders.admin');
         Route::put('/admin/orders/{commande}/confirm', [OrderController::class, 'updateStatus'])->name('orders.confirm');
+    });
+
+    // Messages (Admin only)
+    Route::middleware('role:Admin')->group(function () {
+        Route::get('/admin/messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::put('/admin/messages/{id}', [MessageController::class, 'update'])->name('messages.update');
+        Route::delete('/admin/messages/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
     });
 });
 

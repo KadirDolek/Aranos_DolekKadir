@@ -1,10 +1,24 @@
+import { useForm } from '@inertiajs/react'
 import Nav from '@/Components/Nav'
 import Footer from '@/Components/Footer'
-import { IoLocationSharp } from "react-icons/io5";
-import { FaPhoneAlt } from "react-icons/fa";
-import { IoMdMail } from "react-icons/io";
+import { IoLocationSharp } from "react-icons/io5"
+import { FaPhoneAlt } from "react-icons/fa"
+import { IoMdMail } from "react-icons/io"
 
 export default function Contact({ bannerImage }) {
+  const { data, setData, post, processing, errors, recentlySuccessful } = useForm({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    post(route('contact.store'))
+  }
+
   return (
     <div>
       <Nav />
@@ -19,9 +33,7 @@ export default function Contact({ bannerImage }) {
         </div>
       </div>
 
-      {/* === Container global === */}
       <div className="w-[80%] mx-auto my-10">
-        {/* Iframe */}
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2613.79422420027!2d4.3387872765001445!3d50.855470258119205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3c38e84af80dd%3A0xe85cd9cd0218a4aa!2sPl.%20de%20la%20Minoterie%2010%2C%201080%20Molenbeek-Saint-Jean!5e1!3m2!1sfr!2sbe!4v1759241554052!5m2!1sfr!2sbe"
           width="100%"
@@ -33,35 +45,79 @@ export default function Contact({ bannerImage }) {
           className="rounded-lg shadow-md"
         />
 
-        {/* Formulaire + Infos */}
         <div className="grid grid-cols-3 gap-10 mt-10 items-start">
           {/* Formulaire */}
           <div className="col-span-2 bg-white p-5 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
             <h3 className="mb-5 text-xl font-bold">Get in Touch</h3>
-            <textarea 
-              placeholder="Enter Message" 
-              className="w-full p-3 mb-4 rounded border border-gray-300 resize-y min-h-[120px]"
-            ></textarea>
-            <div className="flex gap-4 mb-4">
-              <input 
-                type="text" 
-                placeholder="Enter your name" 
-                className="flex-1 p-3 rounded border border-gray-300"
+            
+            {recentlySuccessful && (
+              <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+                Votre message a été envoyé avec succès!
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <textarea 
+                placeholder="Enter Message"
+                value={data.message}
+                onChange={e => setData('message', e.target.value)}
+                className="w-full p-3 mb-2 rounded border border-gray-300 resize-y min-h-[120px]"
               />
-              <input 
-                type="email" 
-                placeholder="Enter email address" 
-                className="flex-1 p-3 rounded border border-gray-300"
-              />
-            </div>
-            <input 
-              type="text" 
-              placeholder="Enter Subject" 
-              className="w-full p-3 mb-4 rounded border border-gray-300"
-            />
-            <button className="bg-[#f72585] text-white py-3 px-5 rounded font-bold cursor-pointer hover:bg-[#d61a6c] transition-colors">
-              SEND MESSAGE
-            </button>
+              {errors.message && <div className="text-red-500 text-sm mb-3">{errors.message}</div>}
+              
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <input 
+                    type="text" 
+                    placeholder="Enter your name"
+                    value={data.name}
+                    onChange={e => setData('name', e.target.value)}
+                    className="w-full p-3 rounded border border-gray-300"
+                  />
+                  {errors.name && <div className="text-red-500 text-sm mt-1">{errors.name}</div>}
+                </div>
+                <div className="flex-1">
+                  <input 
+                    type="email" 
+                    placeholder="Enter email address"
+                    value={data.email}
+                    onChange={e => setData('email', e.target.value)}
+                    className="w-full p-3 rounded border border-gray-300"
+                  />
+                  {errors.email && <div className="text-red-500 text-sm mt-1">{errors.email}</div>}
+                </div>
+              </div>
+              
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <input 
+                    type="text" 
+                    placeholder="Phone (optional)"
+                    value={data.phone}
+                    onChange={e => setData('phone', e.target.value)}
+                    className="w-full p-3 rounded border border-gray-300"
+                  />
+                </div>
+                <div className="flex-1">
+                  <input 
+                    type="text" 
+                    placeholder="Enter Subject"
+                    value={data.subject}
+                    onChange={e => setData('subject', e.target.value)}
+                    className="w-full p-3 rounded border border-gray-300"
+                  />
+                  {errors.subject && <div className="text-red-500 text-sm mt-1">{errors.subject}</div>}
+                </div>
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={processing}
+                className="bg-[#f72585] text-white py-3 px-5 rounded font-bold cursor-pointer hover:bg-[#d61a6c] transition-colors disabled:opacity-50"
+              >
+                {processing ? 'Envoi en cours...' : 'SEND MESSAGE'}
+              </button>
+            </form>
           </div>
 
           {/* Infos Contact */}
@@ -91,7 +147,7 @@ export default function Contact({ bannerImage }) {
                 <IoMdMail />
               </span>
               <p className="m-0 text-sm text-gray-800">
-                <strong>mouss@mouss.be</strong><br />
+                <strong>muchokado@outlook.be</strong><br />
                 Send us your query anytime!
               </p>
             </div>

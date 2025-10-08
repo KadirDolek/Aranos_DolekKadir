@@ -17,7 +17,7 @@ export default function Home({ bannerProducts, featuredProducts, shopProducts, o
     );
   };
 
-  // Produits affichés (8 visibles → 2 lignes de 4)
+
   const visibleProducts = awesomeProducts
     .slice(startIndex, startIndex + 8)
     .concat(
@@ -26,7 +26,7 @@ export default function Home({ bannerProducts, featuredProducts, shopProducts, o
         : []
     );
 
-    // USEEFFECT SALE
+
     const [targetDate, setTargetDate] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() + 5);
