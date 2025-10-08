@@ -14,63 +14,55 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Récupérer les produits pour le carousel banner
-        $bannerProducts = Produit::where('image1', 'banner_img.png')
-            ->orWhere('image1', 'like', 'product_%')
-            ->get();
-        // URL de base pour les images
         $imageBaseUrl = asset('storage');
-        // Récupérer les produits featured (avec images feature_)
-        $featuredProducts = Produit::whereIn('image1', [
-            'feature_1.png', 
-            'feature_2.png', 
-            'feature_3.png', 
-            'feature_4.png'
-        ])->get()->map(function ($p) use ($imageBaseUrl) {
-            $p->image_url = $imageBaseUrl . '/feature/large/' . $p->image1;
-            return $p;
-        });
-        // Récupérer les produits pour la section "Awesome Shop" (8 premiers produits avec product_)
-        $baseProducts = Produit::where('image1', 'like', 'product_%')
-            ->take(8)
-            ->get(); 
-        $featureProducts = Produit::where('image1', 'like', 'feature_%')
-            ->take(2)
-            ->get();
 
-        $awesomeProducts = $baseProducts->merge($featureProducts);
-        $awesomeProducts = $awesomeProducts->map(function ($p) use ($imageBaseUrl) {
-            if (str_starts_with($p->image1, 'feature_')) {
-                $p->image_url = $imageBaseUrl . '/feature/large/' . $p->image1;
-            } else {
-                $p->image_url = $imageBaseUrl . '/product/' . $p->image1;
-            }
-            return $p;
-        });
-        // Récupérer le produit pour l'offre spéciale
-        $offerProduct = Produit::where('image1', 'offer_img.png')->first();
-        
-        // Récupérer toutes les catégories
-        $categories = ProduitsCategorie::all();
-        
+        // 1. Produits pour le carousel banner - Utilisez une logique métier
+        $bannerProducts = Produit::where('isPinned', true) // Ou une autre logique
+            ->take(5)
+            ->get()
+            ->map(function ($p) use ($imageBaseUrl) {
+                $p->image_url = $this->getImageUrl($p->image1, $imageBaseUrl);
+                return $p;
+            });
+
+        // 2. Produits featured - Prenez les 4 premiers produits populaires
+        $featuredProducts = Produit::orderBy('ventes', 'desc')
+            ->take(4)
+            ->get()
+            ->map(function ($p) use ($imageBaseUrl) {
+                $p->image_url = $this->getImageUrl($p->image1, $imageBaseUrl);
+                return $p;
+            });
+
+        // 3. Produits pour "Awesome Shop" - 8 produits aléatoires ou populaires
+        $awesomeProducts = Produit::inRandomOrder() // ou orderBy('created_at', 'desc')
+            ->take(8)
+            ->get()
+            ->map(function ($p) use ($imageBaseUrl) {
+                $p->image_url = $this->getImageUrl($p->image1, $imageBaseUrl);
+                return $p;
+            });
+
+        // 4. Meilleures ventes
         $bestSellers = Produit::orderBy('ventes', 'desc')
             ->take(5)
             ->get()
             ->map(function ($p) use ($imageBaseUrl) {
-                if (str_starts_with($p->image1, 'feature_')) {
-                    $p->image_url = $imageBaseUrl . '/feature/large/' . $p->image1;
-                } elseif (str_starts_with($p->image1, 'product_')) {
-                    $p->image_url = $imageBaseUrl . '/product/' . $p->image1;
-                } elseif ($p->image1 === 'offer_img.png') {
-                    $p->image_url = $imageBaseUrl . '/offer/' . $p->image1;
-                } elseif ($p->image1 === 'banner_img.png') {
-                    $p->image_url = $imageBaseUrl . '/banner/' . $p->image1;
-                } else {
-                    $p->image_url = $imageBaseUrl . '/' . $p->image1;
-                }
+                $p->image_url = $this->getImageUrl($p->image1, $imageBaseUrl);
                 return $p;
             });
-        
+
+        // 5. Produit en offre spéciale
+        $offerProduct = Produit::whereNotNull('promo_id')
+            ->inRandomOrder()
+            ->first();
+
+        if ($offerProduct) {
+            $offerProduct->image_url = $this->getImageUrl($offerProduct->image1, $imageBaseUrl);
+        }
+
+        // 6. Catégories
+        $categories = ProduitsCategorie::all();
         
         return Inertia::render('Home', compact(
             'bannerProducts',
@@ -81,5 +73,28 @@ class HomeController extends Controller
             'imageBaseUrl',
             'awesomeProducts',
         ));
+    }
+
+    /**
+     * Méthode helper pour générer les URLs d'images de manière cohérente
+     */
+    private function getImageUrl($imageName, $baseUrl)
+    {
+        if (!$imageName) {
+            return null;
+        }
+
+        // Si l'image est déjà un chemin complet
+        if (str_starts_with($imageName, 'http')) {
+            return $imageName;
+        }
+
+        // Si c'est un chemin de stockage
+        if (str_starts_with($imageName, 'storage/')) {
+            return asset($imageName);
+        }
+
+        // Sinon, utilisez un dossier unique pour tous les produits
+        return $baseUrl . '/product/' . $imageName;
     }
 }

@@ -36,7 +36,7 @@ export default function Carousel({ bannerProducts, imageBaseUrl }) {
                         </div>
                         <div className="flex-1 flex justify-end">
                             <img
-                                src={`${imageBaseUrl}/banner/${product.image1}`}
+                                src={product.image_url}  // ← Changé ici
                                 alt={product.nom}
                                 className="max-w-[400px] h-auto object-contain"
                             />
