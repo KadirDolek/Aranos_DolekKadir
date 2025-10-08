@@ -8,7 +8,6 @@ export default function BlogAdmin({ bannerImage }) {
   const [editingId, setEditingId] = useState(null)
   const [showingId, setShowingId] = useState(null)
 
-  // Utilisation de useForm d'Inertia pour une meilleure gestion
   const { data, setData, post, reset, processing, errors } = useForm({
     titre: '',
     description: '',
@@ -88,213 +87,289 @@ export default function BlogAdmin({ bannerImage }) {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <NavAdmin />
+      
       {/* Header Section */}
-      <div className="bg-[#FEDADA] flex justify-center gap-12 items-center pt-4 pb-4">
-        <div className="ml-[15%]">
-          <h2 className="font-medium text-4xl">Blogs Settings</h2>
-          <p className="text-gray-600 mt-2">Aranoz - Shop System</p>
+      <div className="bg-[#FEDADA] flex justify-between items-center px-8 py-6 rounded-b-2xl shadow-sm">
+        <div className="flex-1">
+          <h2 className="font-bold text-3xl text-gray-800">Blogs Settings</h2>
+          <p className="text-gray-600 mt-1 text-lg">Aranoz - Shop System</p>
         </div>
-        <div>
-          <img className="w-full max-w-xs h-auto" src={bannerImage} alt="Blog Admin Banner" />
+        <div className="flex-1 flex justify-end">
+          <img 
+            className="w-64 h-32 object-contain transform hover:scale-105 transition-transform duration-300" 
+            src={bannerImage} 
+            alt="Blog Admin Banner" 
+          />
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="w-[90%] mx-auto my-10">
-        <button className="bg-[#0d9488] text-white py-2.5 px-5 rounded font-bold border-none mb-5 cursor-pointer hover:bg-[#0f766e] transition-colors">
-          + Add a New blog
-        </button>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Add New Blog Button */}
+        <div className="mb-8">
+          <button className="bg-[#0d9488] text-white py-3 px-6 rounded-xl font-semibold border-none shadow-lg hover:bg-[#0f766e] transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center gap-2">
+            <span className="text-xl">+</span>
+            Add a New Blog
+          </button>
+        </div>
 
-        {/* Table */}
-        <table className="w-full border-collapse mb-10 bg-white rounded-lg overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
-          <thead>
-            <tr>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Picture</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Blog</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Categorie</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">User Role</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Details</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Modification</th>
-              <th className="text-left py-3 px-4 border-b border-gray-200 bg-gray-50 font-semibold">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {blogs.map((b) => (
-              <>
-                <tr key={b.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-3 px-4 border-b border-gray-200">
-                    {b.blog_path && (
-                      <img 
-                        src={`/${b.blog_path}`} 
-                        alt="" 
-                        className="w-15 h-10 object-cover rounded" 
-                      />
-                    )}
-                  </td>
-                  <td className="py-3 px-4 border-b border-gray-200">{b.titre}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{b.categorie?.nom}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">
-                    <span className="bg-red-500 text-white py-1 px-2.5 text-sm rounded-full">
-                      {b.user?.name || 'admin'}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 border-b border-gray-200">
-                    <button 
-                      onClick={() => handleShow(b.id)} 
-                      className="bg-gray-100 text-gray-900 py-1.5 px-3 rounded border-none cursor-pointer hover:bg-gray-200 transition-colors"
-                    >
-                      {showingId === b.id ? 'Hide' : 'Show'}
-                    </button>
-                  </td>
-                  <td className="py-3 px-4 border-b border-gray-200">
-                    <button 
-                      onClick={() => handleEdit(b)} 
-                      className="bg-[#0ea5e9] text-white py-1.5 px-3 rounded border-none cursor-pointer hover:bg-[#0284c7] transition-colors"
-                    >
-                      Edit
-                    </button>
-                  </td>
-                  <td className="py-3 px-4 border-b border-gray-200">
-                    <button 
-                      onClick={() => handleDelete(b.id)} 
-                      className="bg-red-500 text-white py-1.5 px-3 rounded border-none cursor-pointer hover:bg-red-600 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-                {/* Ligne de détails */}
-                {showingId === b.id && (
-                  <tr>
-                    <td 
-                      colSpan="7" 
-                      className="p-5 bg-gray-50 border-b border-gray-200"
-                    >
-                      <strong className="block mb-2">Description complète:</strong>
-                      <p className="text-gray-700">{b.description}</p>
+        {/* Table Container */}
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8 border border-gray-100">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Picture</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Blog</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Categorie</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">User Role</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Details</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Modification</th>
+                <th className="text-left py-4 px-6 font-bold text-gray-700 text-sm uppercase tracking-wider">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {blogs.map((b) => (
+                <>
+                  <tr key={b.id} className="hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0">
+                    <td className="py-4 px-6">
+                      {b.blog_path && (
+                        <img 
+                          src={`/${b.blog_path}`} 
+                          alt="" 
+                          className="w-16 h-12 object-cover rounded-lg shadow-sm border border-gray-200" 
+                        />
+                      )}
+                    </td>
+                    <td className="py-4 px-6 font-medium text-gray-800">{b.titre}</td>
+                    <td className="py-4 px-6">
+                      <span className="bg-blue-50 text-blue-700 py-1.5 px-2 rounded-full text-sm font-medium border border-blue-200">
+                        {b.categorie?.nom}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="bg-red-500 text-white py-1.5 px-4 rounded-full text-sm font-semibold shadow-sm">
+                        {b.user?.name || 'admin'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <button 
+                        onClick={() => handleShow(b.id)} 
+                        className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-200 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                      >
+                        {showingId === b.id ? 'Hide' : 'Show'}
+                      </button>
+                    </td>
+                    <td className="py-4 px-6">
+                      <button 
+                        onClick={() => handleEdit(b)} 
+                        className="bg-[#0ea5e9] text-white py-2 px-4 rounded-lg border-none cursor-pointer hover:bg-[#0284c7] transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                    <td className="py-4 px-6">
+                      <button 
+                        onClick={() => handleDelete(b.id)} 
+                        className="bg-red-500 text-white py-2 px-4 rounded-lg border-none cursor-pointer hover:bg-red-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
-                )}
-              </>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Formulaire modification */}
-        {editingId && (
-          <form onSubmit={handleUpdate} className="flex flex-col gap-3 bg-white p-5 rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
-            <h3 className="text-lg font-semibold mb-2">Edit blog #{editingId}</h3>
-            <input 
-              type="text" 
-              value={data.titre} 
-              placeholder="Titre" 
-              onChange={(e) => setData('titre', e.target.value)} 
-              required 
-              className="p-2.5 border border-gray-300 rounded"
-            />
-            <textarea 
-              value={data.description} 
-              placeholder="Description" 
-              onChange={(e) => setData('description', e.target.value)} 
-              required 
-              className="p-2.5 border border-gray-300 rounded min-h-[100px] resize-y"
-            />
-            <select 
-              value={data.blogcategorie_id} 
-              onChange={(e) => setData('blogcategorie_id', e.target.value)} 
-              required
-              className="p-2.5 border border-gray-300 rounded"
-            >
-              <option value="">Choisir une catégorie</option>
-              {categories?.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.nom}</option>
+                  {/* Details Row */}
+                  {showingId === b.id && (
+                    <tr className="bg-gray-50 border-b border-gray-200 last:border-b-0">
+                      <td 
+                        colSpan="7" 
+                        className="p-6"
+                      >
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                          <strong className="block text-lg text-gray-800 mb-3 font-semibold">Description complète:</strong>
+                          <p className="text-gray-700 leading-relaxed text-justify">{b.description}</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
-            </select>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={(e) => setData('blog_path', e.target.files[0])} 
-              className="p-2.5 border border-gray-300 rounded"
-            />
-            <div className="flex gap-2.5 mt-2">
+            </tbody>
+          </table>
+        </div>
+
+        {/* Edit Form */}
+        {editingId && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-gray-200">
+            <form onSubmit={handleUpdate} className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                <span className="bg-[#0ea5e9] text-white p-2 rounded-lg">✏️</span>
+                Edit blog #{editingId}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">Titre</label>
+                  <input 
+                    type="text" 
+                    value={data.titre} 
+                    placeholder="Titre du blog" 
+                    onChange={(e) => setData('titre', e.target.value)} 
+                    required 
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">Catégorie</label>
+                  <select 
+                    value={data.blogcategorie_id} 
+                    onChange={(e) => setData('blogcategorie_id', e.target.value)} 
+                    required
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Choisir une catégorie</option>
+                    {categories?.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.nom}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Description</label>
+                <textarea 
+                  value={data.description} 
+                  placeholder="Description du blog" 
+                  onChange={(e) => setData('description', e.target.value)} 
+                  required 
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent transition-all duration-200 min-h-[120px] resize-y"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Image du blog</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => setData('blog_path', e.target.files[0])} 
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#0ea5e9] file:text-white hover:file:bg-[#0284c7]"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button 
+                  type="submit" 
+                  disabled={processing}
+                  className="bg-[#2563eb] text-white py-3 px-8 rounded-xl border-none cursor-pointer hover:bg-[#1d4ed8] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {processing ? '🔄 Saving...' : '💾 Update'}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={cancelEdit} 
+                  className="bg-gray-500 text-white py-3 px-8 rounded-xl border-none cursor-pointer hover:bg-gray-600 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center gap-2"
+                >
+                  Annuler
+                </button>
+              </div>
+
+              {errors && Object.keys(errors).length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mt-4">
+                  <div className="text-red-600 font-semibold">
+                    {Object.values(errors).map((err, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span>{err}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </form>
+          </div>
+        )}
+
+        {/* Add Blog Form */}
+        {!editingId && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                
+                Ajouter un nouveau blog
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">Titre</label>
+                  <input 
+                    type="text" 
+                    value={data.titre} 
+                    placeholder="Titre du blog" 
+                    onChange={(e) => setData('titre', e.target.value)} 
+                    required 
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">Catégorie</label>
+                  <select 
+                    value={data.blogcategorie_id} 
+                    onChange={(e) => setData('blogcategorie_id', e.target.value)} 
+                    required
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Choisir une catégorie</option>
+                    {categories?.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.nom}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Description</label>
+                <textarea 
+                  value={data.description} 
+                  placeholder="Description du blog" 
+                  onChange={(e) => setData('description', e.target.value)} 
+                  required 
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 min-h-[120px] resize-y"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Image du blog</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => setData('blog_path', e.target.files[0])} 
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#0d9488] file:text-white hover:file:bg-[#0f766e]"
+                />
+              </div>
+
               <button 
                 type="submit" 
                 disabled={processing}
-                className="bg-[#2563eb] text-white py-2.5 px-5 rounded border-none cursor-pointer hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#15553a] text-white py-3 px-8 rounded-xl border-none cursor-pointer hover:bg-[#1d4ed8] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed mt-4 flex items-center gap-2"
               >
-                {processing ? 'Saving...' : 'Update'}
+                {processing ? 'Saving...' : 'Save Blog'}
               </button>
-              <button 
-                type="button" 
-                onClick={cancelEdit} 
-                className="bg-gray-500 text-white py-2.5 px-5 rounded border-none cursor-pointer hover:bg-gray-600 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-            {errors && Object.keys(errors).length > 0 && (
-              <div className="text-red-500 mt-2.5">
-                {Object.values(errors).map((err, i) => (
-                  <div key={i}>{err}</div>
-                ))}
-              </div>
-            )}
-          </form>
-        )}
 
-        {/* Formulaire ajout blog */}
-        {!editingId && (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3 bg-white p-5 rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
-            <h3 className="text-lg font-semibold mb-2">Add new blog</h3>
-            <input 
-              type="text" 
-              value={data.titre} 
-              placeholder="Titre" 
-              onChange={(e) => setData('titre', e.target.value)} 
-              required 
-              className="p-2.5 border border-gray-300 rounded"
-            />
-            <textarea 
-              value={data.description} 
-              placeholder="Description" 
-              onChange={(e) => setData('description', e.target.value)} 
-              required 
-              className="p-2.5 border border-gray-300 rounded min-h-[100px] resize-y"
-            />
-            <select 
-              value={data.blogcategorie_id} 
-              onChange={(e) => setData('blogcategorie_id', e.target.value)} 
-              required
-              className="p-2.5 border border-gray-300 rounded"
-            >
-              <option value="">Choisir une catégorie</option>
-              {categories?.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.nom}</option>
-              ))}
-            </select>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={(e) => setData('blog_path', e.target.files[0])} 
-              className="p-2.5 border border-gray-300 rounded"
-            />
-            <button 
-              type="submit" 
-              disabled={processing}
-              className="bg-[#2563eb] text-white py-2.5 px-5 rounded border-none cursor-pointer hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-            >
-              {processing ? 'Saving...' : 'Save'}
-            </button>
-            {errors && Object.keys(errors).length > 0 && (
-              <div className="text-red-500 mt-2.5">
-                {Object.values(errors).map((err, i) => (
-                  <div key={i}>{err}</div>
-                ))}
-              </div>
-            )}
-          </form>
+              {errors && Object.keys(errors).length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mt-4">
+                  <div className="text-red-600 font-semibold">
+                    {Object.values(errors).map((err, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span>{err}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </form>
+          </div>
         )}
       </div>
 
