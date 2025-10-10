@@ -5,8 +5,8 @@ import { Link } from "@inertiajs/react";
 export default function Footer(){
   return(
     <>
-    <footer className="bg-white py-15 px-10 border-t border-gray-200">
-      <div className="flex flex-wrap justify-between gap-10 max-w-7xl mx-auto">
+    <footer className="bg-white py-15 px-15 border-t border-gray-200">
+      <div className="flex flex-wrap justify-between gap-10 max-w-7xl mx-auto pt-10">
         {/* Colonne 1 */}
         <div className="flex-1 min-w-45">
           <h4 className="text-base font-semibold mb-4 text-black">Top Products</h4>
@@ -106,7 +106,7 @@ export default function Footer(){
       {/* Bas du footer */}
       <div className="mt-10 pt-5 border-t border-gray-200 flex justify-between items-center flex-wrap max-w-7xl mx-auto">
         <p className="text-xs text-gray-600">
-          Copyright ©2025 All rights reserved | This template is made with ♡ by Arthur
+          Copyright ©2025 All rights reserved | Template realised by Kadir.
         </p>
         <div className="flex">
           <a href="#" className="ml-4 text-lg text-gray-600 hover:text-[#ff2c72] transition-colors duration-300">

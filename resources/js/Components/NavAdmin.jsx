@@ -107,7 +107,7 @@ export default function NavAdmin() {
               </button>
               <div className="absolute top-full left-0 bg-white rounded-xl py-3 min-w-48 z-50 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 border border-gray-100">
                 <Link 
-                  href="/admin/products"
+                  href="/admin/produits"
                   className="block py-3 px-4 text-gray-700 text-sm font-medium no-underline hover:bg-gradient-to-r hover:from-[#FD3266] hover:to-[#FF6B9D] hover:text-white transition-all duration-200 rounded-lg mx-2"
                 >
                   Products
