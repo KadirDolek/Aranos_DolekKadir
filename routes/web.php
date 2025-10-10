@@ -24,6 +24,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
+Route::delete('/blog/comment/{id}', [BlogController::class, 'destroyComment'])->name('blog.comment.destroy');
 
 Route::get('/contact', [ContactFormController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');

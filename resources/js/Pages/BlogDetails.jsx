@@ -2,6 +2,7 @@ import Footer from '@/Components/Footer'
 import Nav from '@/Components/Nav'
 import React, { useState } from 'react'
 import { usePage, router, Link } from '@inertiajs/react'
+import { FaTrash } from "react-icons/fa";
 
 export default function BlogDetails({ bannerImage }) {
   const { blog, categories, tags, recentPosts, auth } = usePage().props
@@ -18,6 +19,25 @@ export default function BlogDetails({ bannerImage }) {
     e.preventDefault()
     router.post(route('blog.comment', blog.id), form)
     setForm({ message: '' })
+  }
+
+  const handleDeleteComment = (commentId) => {
+
+      router.delete(route('blog.comment.destroy', commentId), {
+        preserveScroll: true,
+        onSuccess: () => {
+          // Le commentaire sera automatiquement retiré après la suppression
+        }
+      })
+  }
+
+  // Vérifier si l'utilisateur peut supprimer le commentaire
+  const canDeleteComment = (comment) => {
+    return auth?.user && (
+      auth.user.id === comment.user_id || 
+      auth.user.role_id === 1 || // Admin
+      auth.user.role_id === 2    // Moderator
+    )
   }
 
   return (
@@ -51,13 +71,26 @@ export default function BlogDetails({ bannerImage }) {
           <div className="bg-white p-6 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.08)] mt-10">
             <h3 className="mb-5 text-xl text-gray-800">{blog.commentaires.length} Comments</h3>
             {blog.commentaires.map((comment, i) => (
-              <div key={i} className="py-4 border-b border-gray-200 last:border-b-0">
-                <p className="mb-1">
-                  <strong className="text-[#f72585]">{comment.user?.pseudo}</strong>
-                  {" - "}
-                  {new Date(comment.created_at).toLocaleDateString()}{" "}
-                  {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
+              <div key={i} className="py-4 border-b border-gray-200 last:border-b-0 group relative">
+                <div className="flex justify-between items-start mb-1">
+                  <p>
+                    <strong className="text-[#f72585]">{comment.user?.pseudo}</strong>
+                    {" - "}
+                    {new Date(comment.created_at).toLocaleDateString()}{" "}
+                    {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                  
+                  {/* Bouton supprimer */}
+                  {canDeleteComment(comment) && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 ml-4"
+                      title="Supprimer le commentaire"
+                    >
+                      Supprimer
+                    </button>
+                  )}
+                </div>
                 <p className="text-gray-700 leading-relaxed">{comment.message}</p>
               </div>
             ))}
