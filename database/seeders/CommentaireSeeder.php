@@ -15,27 +15,27 @@ class CommentaireSeeder extends Seeder
     {
         Commentaire::insert([
             [
-                'message' => 'commentaire test pour le blog dont l id est egale au 1 ',
+                'message' => 'test1',
                 'user_id' => 1,
                 'blog_id' => 1
             ],
             [
-                'message' => 'commentaire test pour le blog dont l id est egale au 2 ',
+                'message' => 'test2 ',
                 'user_id' => 1,
                 'blog_id' => 2
             ],
             [
-                'message' => 'commentaire test pour le blog dont l id est egale au 3 ',
+                'message' => 'Lorem blablabla ',
                 'user_id' => 1,
                 'blog_id' => 3
             ],
             [
-                'message' => 'commentaire test pour le blog dont l id est egale au 4 ',
+                'message' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex accusantium officia dolorum mollitia quas vitae suscipit, quae minus dolorem animi nobis, voluptas nesciunt! Ab ad iure exercitationem. Magnam, alias ducimus.',
                 'user_id' => 1,
                 'blog_id' => 4
             ],
             [
-                'message' => 'commentaire test pour le blog dont l id est egale au 5 ',
+                'message' => 'dfksdhfidshsidhfds ',
                 'user_id' => 1,
                 'blog_id' => 5
             ],

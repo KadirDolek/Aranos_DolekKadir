@@ -61,7 +61,7 @@ export default function Blog({bannerImage}) {
                   <p className="mt-2 text-gray-700">{blog.description.substring(0, 150)}...</p>
                   <div className="mt-2.5 text-sm text-gray-600">
                     <span>Catégorie: {blog.categorie?.nom}</span>
-                    <span> | {blog.commentaires?.length ?? 0} Comments</span>
+                    <span> | {blog.commentaires?.length ?? 1} Commentaires</span>
                   </div>
                 </div>
               </div>

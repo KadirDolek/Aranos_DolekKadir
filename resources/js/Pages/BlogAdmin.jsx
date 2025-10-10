@@ -107,14 +107,6 @@ export default function BlogAdmin({ bannerImage }) {
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Add New Blog Button */}
-        <div className="mb-8">
-          <button className="bg-[#0d9488] text-white py-3 px-6 rounded-xl font-semibold border-none shadow-lg hover:bg-[#0f766e] transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center gap-2">
-            <span className="text-xl">+</span>
-            Add a New Blog
-          </button>
-        </div>
-
         {/* Table Container */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8 border border-gray-100">
           <table className="w-full">
